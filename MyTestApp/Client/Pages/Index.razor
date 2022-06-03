@@ -1,0 +1,30 @@
+﻿@page "/home"
+@using Newtonsoft.Json
+@inject HttpClient client
+
+<PageTitle>Index</PageTitle>
+
+<h1>Type your name</h1>
+
+<input type="text" @bind="MyName" placeholder="Type your name" />
+<input type="button" value="How old am I?" @onclick="FindMyAge" />
+
+@MyName
+
+<div>
+    Your age is : @YourAge
+</div>
+
+@code{
+    string MyName;
+    string YourAge;
+
+    private async void FindMyAge()
+    {
+        var response = await client.GetAsync($"https://api.agify.io/?name={MyName}");
+        var temp = await response.Content.ReadAsStringAsync();
+
+        var age = JsonConvert.DeserializeObject<dynamic>(temp);
+        YourAge = age.age;
+    }
+} 
